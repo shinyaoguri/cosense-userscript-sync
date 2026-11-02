@@ -10,6 +10,16 @@
       "project": "cosense-userscript-sync",
       "page": "公開状態を表示するバー",
       "files": ["script.js", "lib.js"]
+    },
+    "fullscreen-shortcut": {
+      "project": "shinyaoguri",
+      "page": "Ctrl+FでScrapboxのページをフルスクリーンにするUserScript",
+      "files": ["script.js", "lib.js"]
+    },
+    "zenkaku-space-highlight": {
+      "project": "shinyaoguri",
+      "page": "全角スペースを強調表示するUserScript",
+      "files": ["script.js", "lib.js"]
     }
   }
 }
