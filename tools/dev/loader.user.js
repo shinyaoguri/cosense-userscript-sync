@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         cosense-userscript-sync dev loader
 // @namespace    https://github.com/shinyaoguri/cosense-userscript-sync
-// @version      1.0.0
+// @version      1.0.1
 // @description  開発中の UserScript を localhost から実際の Cosense に読み込み、保存したら再読み込みする
 // @match        https://scrapbox.io/*
 // @run-at       document-start
@@ -10,6 +10,8 @@
 // @grant        GM_setValue
 // @grant        unsafeWindow
 // @connect      127.0.0.1
+// @updateURL    http://127.0.0.1:5917/loader.user.js
+// @downloadURL  http://127.0.0.1:5917/loader.user.js
 // ==/UserScript==
 
 // 開発のときだけ入れる。本番の UserScript はこのローダーにも Tampermonkey にも依存しない。
@@ -100,7 +102,10 @@ async function main() {
   }, 1000);
   if (!active) return;
 
-  await waitFor(() => pageEval("typeof scrapbox !== 'undefined' && Boolean(scrapbox.Project?.name)"));
+  // Cosense の準備ができる前は、scrapbox.Project.name の getter が例外を投げる (中の値がまだ null)
+  await waitFor(() =>
+    pageEval("(() => { try { return Boolean(scrapbox.Project.name); } catch { return false; } })()"),
+  );
   for (const id of config.scripts) {
     pageEval(await request(`/bundle/${id}.js`, 10_000));
     // 開発版が台帳を取れたか (本番版が先に動いていたら取れない)
@@ -127,4 +132,4 @@ async function main() {
   }
 }
 
-main();
+main().catch((error) => console.error("[dev loader]", error));

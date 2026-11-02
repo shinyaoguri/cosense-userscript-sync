@@ -118,9 +118,10 @@ async function main(): Promise<void> {
     }, 100);
   });
 
-  const loader = (await readFile(join(ROOT, "tools/dev/loader.user.js"), "utf8")).replace(
-    /const DEV_SERVER = ".*";/,
-    `const DEV_SERVER = "http://127.0.0.1:${port}";`,
+  // ローダーの中の接続先 (DEV_SERVER と更新の URL) を、実際のポートに書き換えて配る
+  const loader = (await readFile(join(ROOT, "tools/dev/loader.user.js"), "utf8")).replaceAll(
+    "http://127.0.0.1:5917",
+    `http://127.0.0.1:${port}`,
   );
 
   const server = createServer((request, response) => {
