@@ -3,7 +3,7 @@
   "repository": "shinyaoguri/cosense-userscript-sync",
   "dev": {
     "project": "cosense-userscript-sync",
-    "port": 5173
+    "port": 5917
   },
   "scripts": {
     "public-status-bar": {

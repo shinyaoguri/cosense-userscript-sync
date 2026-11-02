@@ -13,7 +13,7 @@
     "sync": "node tools/sync/cli.ts",
     "lint": "biome check .",
     "lint:fix": "biome check --write .",
-    "typecheck": "tsc --noEmit && tsc --noEmit -p userscripts && tsc --noEmit -p userscripts/tsconfig.test.json",
+    "typecheck": "tsc --noEmit && tsc --noEmit -p userscripts && tsc --noEmit -p userscripts/tsconfig.test.json && tsc --noEmit -p tools/dev",
     "test": "node --test",
     "check": "npm run lint && npm run typecheck && npm test"
   },
