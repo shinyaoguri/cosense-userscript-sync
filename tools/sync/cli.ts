@@ -101,7 +101,9 @@ function summarize(id: string, entry: ScriptEntry, plans: readonly FilePlan[]): 
     }
     if (plan.kind === "conflict") {
       parts.push(`- code:${plan.file}: **競合** — ${plan.reason}`);
-      if (plan.editedDiff) parts.push("", "ページ上での変更:", "```diff", plan.editedDiff, "```");
+      if (plan.editedDiff)
+        parts.push("", "ページ上での変更 (前回配置した版 → ページ):", "```diff", plan.editedDiff, "```");
+      parts.push("", "--force で上書きしたときの変更 (ページ → 手元):");
     } else {
       parts.push(`- code:${plan.file}: 更新 (${plan.ops.length} ops)`);
     }
