@@ -50,6 +50,7 @@ function renderBar(style) {
       font: "bold 12px/18px sans-serif",
       color: "#fff",
       textAlign: "center",
+      // バーの下の画面はそのまま操作できるように、クリックを通す
       pointerEvents: "none",
       opacity: "0.85",
     });
