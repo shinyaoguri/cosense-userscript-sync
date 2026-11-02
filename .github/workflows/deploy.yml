@@ -1,0 +1,86 @@
+# Cosense への配置。UserScript ごとのページの、指定したコードブロックだけを手元のソースに合わせる。
+#
+# - 手動 (workflow_dispatch) で起こす。mode は dry-run (読むだけ) / preview (サーバーの preview まで。確定しない) / deploy
+# - **書き込み (preview・deploy) は main からだけ。** 他のブランチで起こすと止まる
+# - 秘密 `COSENSE_PAT` は environment `cosense` に置き、同期のステップにだけ渡す。
+#   environment に Required reviewers を付ければ、配置のたびに人の承認を挟める
+# - 同じ配置先への同時実行を直列にする (cancel しない。途中で止めても配信物は壊れないが、照合まで走らせる)
+# - 過去のコードへ戻すときは、main で revert してから deploy する (ref を指定して古い版を配ることもできる)
+name: Deploy to Cosense
+
+on:
+  workflow_dispatch:
+    inputs:
+      scripts:
+        description: 配置する UserScript の id (空白区切り。空ならすべて)
+        required: false
+        default: ""
+      mode:
+        description: dry-run / preview / deploy
+        type: choice
+        options: [dry-run, preview, deploy]
+        default: dry-run
+      force:
+        description: ページ上で手編集されていても上書きする (競合を確かめてから)
+        type: boolean
+        default: false
+      ref:
+        description: 配置するリビジョン (空なら起こしたブランチの先頭。古い版へ戻すときに使う)
+        required: false
+        default: ""
+  # 自動デプロイにするときは、次を有効にする (main に入った UserScript をそのまま配る)。
+  # 競合 (ページ上の手編集) があると失敗して止まり、上書きはしない
+  # push:
+  #   branches: [main]
+  #   paths:
+  #     - "userscripts/**"
+  #     - cosense-sync.config.json
+
+concurrency:
+  group: cosense-deploy
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    environment: cosense
+    steps:
+      - name: 書き込みは main からだけ
+        if: inputs.mode != 'dry-run' && github.ref != 'refs/heads/main'
+        run: |
+          echo "::error::preview と deploy は main から起こしてください (今は ${GITHUB_REF})"
+          exit 1
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ inputs.ref }}
+          fetch-depth: 0
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - name: 同期
+        env:
+          COSENSE_PAT: ${{ secrets.COSENSE_PAT }}
+          SCRIPTS: ${{ inputs.scripts }}
+          MODE: ${{ inputs.mode || 'deploy' }}
+          FORCE: ${{ inputs.force }}
+        run: |
+          if [ -z "$COSENSE_PAT" ]; then
+            echo "::error::environment cosense に secret COSENSE_PAT がありません (README の「PAT と GitHub Secrets」)"
+            exit 1
+          fi
+          args=()
+          case "$MODE" in
+            dry-run) args+=(--dry-run) ;;
+            preview) args+=(--preview) ;;
+            deploy) ;;
+            *) echo "::error::mode が不正: $MODE"; exit 1 ;;
+          esac
+          if [ "$FORCE" = "true" ]; then args+=(--force); fi
+          # shellcheck disable=SC2086 # id は空白区切りで渡す
+          npm run sync -- $SCRIPTS "${args[@]}"
