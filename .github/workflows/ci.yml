@@ -1,0 +1,49 @@
+# CI。Cosense の認証情報を使わない。
+#
+# - check: lint・型検査・単体テスト。package.json の `check` と同じもので、手元と乖離しない。
+#   Cosense へは繋がない (同期のテストは偽の Cosense で行う)
+# - cosense-diff: main のソースと、公開プロジェクトのページの差分・競合を dry-run で見る (読むだけ)。
+#   **required にしない** — 外部 (scrapbox.io) の都合や、ページ上の手編集 (競合) で赤くなる。赤いときは
+#   ジョブのサマリに差分が出る。非公開プロジェクトのページは認証なしでは読めないので、ここでは見られない
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+concurrency:
+  group: ci-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - run: npm run check
+
+  cosense-diff:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          # 競合の報告で、前回配置した版を git から取り出す
+          fetch-depth: 0
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - name: Cosense のページとの差分 (dry-run・認証なし)
+        run: npm run sync -- --dry-run

@@ -1,0 +1,9 @@
+{
+  // UserScript の単体テスト (node --test で動く)。本体と違い node の型を使う
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "types": ["node"]
+  },
+  "include": ["**/*.test.js"],
+  "exclude": []
+}
