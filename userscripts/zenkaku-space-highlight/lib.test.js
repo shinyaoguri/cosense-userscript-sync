@@ -4,11 +4,11 @@ import { targetIndices } from "./lib.js";
 
 describe("targetIndices", () => {
   it("全角スペースの位置だけを返し、半角スペースは拾わない", () => {
-    assert.deepEqual(targetIndices("全角　スペース 半角"), [2]);
+    assert.deepEqual(targetIndices("全角\u3000スペース 半角"), [2]);
   });
 
   it("連続・先頭・末尾も 1 文字ずつ拾う", () => {
-    assert.deepEqual(targetIndices("　　a　"), [0, 1, 3]);
+    assert.deepEqual(targetIndices("\u3000\u3000a\u3000"), [0, 1, 3]);
   });
 
   it("無ければ空", () => {

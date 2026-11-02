@@ -1,7 +1,7 @@
 // 全角スペースを強調表示する UserScript の、画面に触れない部分 (単体テストする)
 
 /** 強調する文字 (全角スペース) */
-export const TARGET = "　";
+export const TARGET = "\u3000";
 
 /**
  * 同じ UserScript を 1 ページで 1 度だけ動かす。動かしてよければ台帳に印を付けて true を返す。
