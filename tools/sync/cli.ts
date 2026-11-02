@@ -83,7 +83,6 @@ export function pageTemplate(config: Config, id: string, entry: ScriptEntry): st
     "[* 関連]",
     `[GitHub https://github.com/${config.repository}/tree/main/userscripts/${id}]`,
     "",
-    "[hr.icon]",
     "[* 実装]",
     "以下のコードは GitHub から同期されます。直すときは GitHub で (ここを直接直すと、次の同期が競合で止まります)",
   ];
