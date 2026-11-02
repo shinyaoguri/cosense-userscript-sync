@@ -1,0 +1,17 @@
+{
+  // UserScript (ブラウザで ES module として動く JavaScript)。ビルドせず、JSDoc と checkJs で型を検査する
+  "compilerOptions": {
+    "target": "es2024",
+    "module": "esnext",
+    "moduleResolution": "bundler",
+    "lib": ["es2024", "dom", "dom.iterable"],
+    "types": [],
+    "allowJs": true,
+    "checkJs": true,
+    "strict": true,
+    "noEmit": true,
+    "skipLibCheck": true
+  },
+  "include": ["**/*.js", "../types/cosense-global.d.ts"],
+  "exclude": ["**/*.test.js"]
+}

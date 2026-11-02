@@ -1,0 +1,15 @@
+{
+  "origin": "https://scrapbox.io",
+  "repository": "shinyaoguri/cosense-userscript-sync",
+  "dev": {
+    "project": "cosense-userscript-sync",
+    "port": 5173
+  },
+  "scripts": {
+    "public-status-bar": {
+      "project": "cosense-userscript-sync",
+      "page": "公開状態を表示するバー",
+      "files": ["script.js", "lib.js"]
+    }
+  }
+}

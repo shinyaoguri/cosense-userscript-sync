@@ -1,0 +1,28 @@
+{
+  "name": "cosense-userscript-sync",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Cosense の UserScript を GitHub で開発し、ページごとのコードブロックへ一方向に同期する",
+  "license": "MIT",
+  "type": "module",
+  "engines": {
+    "node": ">=24"
+  },
+  "scripts": {
+    "dev": "node tools/dev/server.ts",
+    "sync": "node tools/sync/cli.ts",
+    "lint": "biome check .",
+    "lint:fix": "biome check --write .",
+    "typecheck": "tsc --noEmit && tsc --noEmit -p userscripts && tsc --noEmit -p userscripts/tsconfig.test.json",
+    "test": "node --test",
+    "check": "npm run lint && npm run typecheck && npm test"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "2.6.4",
+    "@cosense/types": "0.11.7",
+    "@helpfeel/cosense-cli": "1.18.0",
+    "@types/node": "24.19.2",
+    "esbuild": "0.28.2",
+    "typescript": "7.0.2"
+  }
+}
