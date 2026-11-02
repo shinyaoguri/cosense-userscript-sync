@@ -87,9 +87,8 @@ export function pageTemplate(config: Config, id: string, entry: ScriptEntry): st
     "[* 実装]",
     "以下のコードは GitHub から同期されます。直すときは GitHub で (ここを直接直すと、次の同期が競合で止まります)",
   ];
-  for (const file of entry.files) {
-    lines.push(`code:${file}`, "");
-  }
+  // ブロックの間は空行で区切る。末尾の空行はサーバーが落とすので付けない
+  lines.push(...entry.files.flatMap((file, i) => (i === 0 ? [`code:${file}`] : ["", `code:${file}`])));
   return lines.join("\n");
 }
 
